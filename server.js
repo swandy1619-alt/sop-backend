@@ -1,24 +1,23 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require("openai");
 
 const app = express();
 app.use(bodyParser.json());
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
-const openai = new OpenAIApi(configuration);
 
 app.post("/api/chunk-sop", async (req, res) => {
   const { text, filename } = req.body;
   const prompt = `Chunk the following SOP into modular JSON entries with id, topic, triggers, response, and source:\n\n${text}`;
-  const completion = await openai.createChatCompletion({
+  const completion = await openai.chat.completions.create({
     model: "gpt-4",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.2
   });
-  const json = JSON.parse(completion.data.choices[0].message.content);
+  const json = JSON.parse(completion.choices[0].message.content);
   res.json(json);
 });
 
