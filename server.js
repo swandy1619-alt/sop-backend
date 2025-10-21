@@ -1,3 +1,14 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+const OpenAI = require("openai");
+
+const app = express();
+app.use(bodyParser.json());
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
 app.post("/api/chunk-sop", async (req, res) => {
   const { text, filename } = req.body;
   const prompt = `
@@ -37,3 +48,5 @@ ${text}
     res.status(500).json({ error: "Failed to chunk SOP" });
   }
 });
+
+app.listen(3000, () => console.log("SOP Oracle backend running on port 3000"));
