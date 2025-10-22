@@ -25,11 +25,11 @@ ${text}
 `;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.2
-    });
+const completion = await openai.chat.completions.create({
+  model: "gpt-3.5-turbo",
+  messages: [{ role: "user", content: prompt }],
+  temperature: 0.2
+});
 
     const raw = completion.choices[0].message.content;
     console.log("Raw response:", raw);
