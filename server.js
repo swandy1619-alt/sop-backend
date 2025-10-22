@@ -6,7 +6,10 @@ const app = express();
 app.use(bodyParser.json());
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
+  defaultHeaders: {
+    "OpenAI-Project": process.env.OPENAI_PROJECT_ID // ✅ Explicit project scoping
+  }
 });
 
 app.post("/api/chunk-sop", async (req, res) => {
@@ -27,7 +30,7 @@ ${text}
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // ✅ downgraded for compatibility
+      model: "gpt-3.5-turbo", // ✅ Compatible fallback
       messages: [{ role: "user", content: prompt }],
       temperature: 0.2
     });
