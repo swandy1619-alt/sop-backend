@@ -43,10 +43,11 @@ ${text}
     }
 
     res.json(json);
-  } catch (error) {
-    console.error("OpenAI error:", error);
-    res.status(500).json({ error: "Failed to chunk SOP" });
-  }
+} catch (error) {
+  console.error("OpenAI error:", error.message);
+  console.error("Full error object:", error);
+  res.status(500).json({ error: "Failed to chunk SOP" });
+}
 });
 
 app.listen(3000, () => console.log("SOP Oracle backend running on port 3000"));
