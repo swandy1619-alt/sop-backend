@@ -11,6 +11,7 @@ const openai = new OpenAI({
 
 app.post("/api/chunk-sop", async (req, res) => {
   const { text, filename } = req.body;
+
   const prompt = `
 You are an SOP chunking assistant. Given the following SOP text, return a JSON array of modular entries. Each entry must include:
 
@@ -25,11 +26,11 @@ ${text}
 `;
 
   try {
-const completion = await openai.chat.completions.create({
-  model: "gpt-3.5-turbo",
-  messages: [{ role: "user", content: prompt }],
-  temperature: 0.2
-});
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo", // ✅ downgraded for compatibility
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.2
+    });
 
     const raw = completion.choices[0].message.content;
     console.log("Raw response:", raw);
@@ -38,16 +39,17 @@ const completion = await openai.chat.completions.create({
     try {
       json = JSON.parse(raw);
     } catch (parseError) {
-      console.error("Failed to parse JSON:", parseError);
+      console.error("Failed to parse JSON:", parseError.message);
+      console.error("Raw response was:", raw);
       return res.status(500).json({ error: "OpenAI returned invalid JSON" });
     }
 
     res.json(json);
-} catch (error) {
-  console.error("OpenAI error:", error.message);
-  console.error("Full error object:", error);
-  res.status(500).json({ error: "Failed to chunk SOP" });
-}
+  } catch (error) {
+    console.error("OpenAI error:", error.message);
+    console.error("Full error object:", error);
+    res.status(500).json({ error: "Failed to chunk SOP" });
+  }
 });
 
 app.listen(3000, () => console.log("SOP Oracle backend running on port 3000"));
